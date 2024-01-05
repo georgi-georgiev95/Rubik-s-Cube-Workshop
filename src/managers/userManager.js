@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+
 const User = require('../models/User');
 
 exports.register = (userData) => User.create(userData);
@@ -5,7 +7,16 @@ exports.register = (userData) => User.create(userData);
 exports.login = async (username, password) => {
     // find user
     const user = await User.findOne({ username });
-    // validate password
 
-    // return user
+    if (!user) {
+        throw new Error('Cannot find username or password');
+    }
+
+    const isValid = await bcrypt.compare(password, user.password);
+
+    if (!isValid) {
+        throw new Error('Cannot find username or password');
+    }
+
+    return user;
 }
